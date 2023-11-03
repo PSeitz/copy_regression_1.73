@@ -1,4 +1,7 @@
-use std::io::{Read, Result};
+use std::{
+    env,
+    io::{Read, Result},
+};
 
 struct ChunkReader<'a> {
     data: &'a [u8],
@@ -23,7 +26,10 @@ impl<'a> Read for ChunkReader<'a> {
 }
 
 fn main() {
-    let data: Vec<u8> = vec![0; 100_000_000];
+    let vec_size = env::args().skip(1).next().unwrap_or("".to_string());
+    let vec_size: usize = vec_size.parse().unwrap_or(100_000_000);
+
+    let data: Vec<u8> = vec![0; vec_size];
     let mut reader = ChunkReader::new(&data);
     let mut out = Vec::new();
     std::io::copy(&mut reader, &mut out).unwrap();
